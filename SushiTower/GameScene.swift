@@ -55,32 +55,6 @@ class GameScene: SKScene {
         sushiTower.append(currentSushi)
     }
     
-    //Cat hitting the base but the piece on top of base should be removed and the whole towert should come down
-    func removeSuShi(){
-        //Get the sushi on top of base
-        var sushiToRemove = self.sushiTower[0]
-
-        //Bring the whole arrray down
-        for sushi in self.sushiTower{
-            let dropAction  = SKAction.move(to: CGPoint(x: sushi.position.x, y: sushi.position.y-100), duration: 0.1)
-            sushi.run(dropAction)
-        }
-        //Remove that sushi from screen
-        sushiToRemove.removeFromParent()
-        
-        //Remove that sushi from Array
-        self.sushiTower.remove(at: 0)
-        
-    //    addSushi()
-//        var newsushiPiece =
-//        self.sushiTower.append(SKSpriteNode(imageNamed: "roll"))
-//        addChild(<#T##node: SKNode##SKNode#>)
-//        for index in 1...self.sushiTower.count{
-//            print("index: \(index)")
-//            let currentSushi = self.sushiTower[index-1]
-//            currentSushi.position.y = currentSushi.position.y-100
-//        }
-    }
     
     override func update(_ currentTime: TimeInterval) {
     }
@@ -137,7 +111,6 @@ class GameScene: SKScene {
         }
         self.cat.run(punchAnimation, completion: {
             //This gets executed when the animation is done running for 0.2 seconds
-            self.removeSuShi()
         })
         
         print(mousePosition)
