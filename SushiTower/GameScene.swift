@@ -12,15 +12,17 @@ import GameplayKit
 class GameScene: SKScene {
     
     var sushiTower : [SKSpriteNode] = []
+    var chopsticks : [SKSpriteNode] = []
     let cat = SKSpriteNode(imageNamed: "character1")
     let sushiBase = SKSpriteNode(imageNamed:"roll")
+    
     var ctr:Int = 7
     override func didMove(to view: SKView) {
         // add background
         let background = SKSpriteNode(imageNamed: "background")
         background.size = self.size
         background.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-        background.zPosition = -1
+        background.zPosition = -2
         addChild(background)
         
         // add cat
@@ -30,11 +32,32 @@ class GameScene: SKScene {
         // add base sushi pieces
         sushiBase.position = CGPoint(x:self.size.width*0.5, y: 100)
         addChild(sushiBase)
+
+        //Create the sushi tower
         for index in 1...5 {
         addSushi()
         }
+        
+        //add chopstick to the sushi pieces
+        addChopStick()
+        
     }
-    
+    func addChopStick(){
+        sushiBase.zPosition = -1
+        var random = Int.random(in: 0..<6)
+        for currentSushi in sushiTower{
+            //Take new chopstick node
+            let chopstick = SKSpriteNode(imageNamed: "chopstick")
+            
+            //Add it to the Array
+            chopsticks.append(chopstick)
+            
+            //Set the X position of the chopstick
+            chopstick.position.x = currentSushi.position.x-100
+            chopstick.position.y = currentSushi.position.y
+            addChild(chopstick)
+        }
+    }
     
    func addSushi()   {
     let currentSushi = SKSpriteNode(imageNamed: "roll")
@@ -46,10 +69,6 @@ class GameScene: SKScene {
             let prevSushi = sushiTower[sushiTower.count - 1]
             currentSushi.position.x = prevSushi.position.x
             currentSushi.position.y = prevSushi.position.y + 100
-            print("Current Sushi X: \(currentSushi.position.x)")
-            print("Current Sushi Y: \(currentSushi.position.y)")
-            print("BASE Sushi X: \(sushiBase.position.x)")
-            print("Current Sushi Y: \(sushiBase.position.y)")
            }
         addChild(currentSushi)
         sushiTower.append(currentSushi)
@@ -58,25 +77,33 @@ class GameScene: SKScene {
     //Cat hitting the base but the piece on top of base should be removed and the whole towert should come down
     func removeSuShi(){
         //Get the sushi on top of base
-        var sushiToRemove = self.sushiTower[0]
-
+        let sushiToRemove = self.sushiTower[0]
+        let stickToRemove = self.chopsticks[0]
+        if(sushiToRemove != nil && chopsticks.count>0){
         //Bring the whole arrray down
         for sushi in self.sushiTower{
+        }
+        for index in 0...(self.sushiTower.count)-1{
+            let sushi = self.sushiTower[index]
+            let currentChopStick =  chopsticks[index]
             let dropAction  = SKAction.move(to: CGPoint(x: sushi.position.x, y: sushi.position.y-100), duration: 0.1)
             sushi.run(dropAction)
+
+            let dropActionChopStick  = SKAction.move(to: CGPoint(x: currentChopStick.position.x, y: currentChopStick.position.y-100), duration: 0.1)
+            currentChopStick.run(dropActionChopStick)
+            
         }
-        //Remove that sushi from screen
+        //Remove that sushi and chopstick from screen
         sushiToRemove.removeFromParent()
-        
-        //Remove that sushi from Array
+        stickToRemove.removeFromParent()
+
+        //Remove that sushi and chopstick from Array
         self.sushiTower.remove(at: 0)
-        
+        self.chopsticks.remove(at: 0)
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
-    }
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
