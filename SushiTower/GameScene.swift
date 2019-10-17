@@ -15,6 +15,7 @@ class GameScene: SKScene {
     var chopsticks : [SKSpriteNode] = []
     let cat = SKSpriteNode(imageNamed: "character1")
     let sushiBase = SKSpriteNode(imageNamed:"roll")
+    var stickPosition = 0
     
     var ctr:Int = 7
     override func didMove(to view: SKView) {
@@ -31,10 +32,11 @@ class GameScene: SKScene {
         
         // add base sushi pieces
         sushiBase.position = CGPoint(x:self.size.width*0.5, y: 100)
+        sushiBase.zPosition = -1
         addChild(sushiBase)
 
         //Create the sushi tower
-        for index in 1...5 {
+        for index in 1...6 {
         addSushi()
         }
         
@@ -43,23 +45,12 @@ class GameScene: SKScene {
         
     }
     func addChopStick(){
-        sushiBase.zPosition = -1
-        var random = Int.random(in: 0..<6)
-        for currentSushi in sushiTower{
-            //Take new chopstick node
-            let chopstick = SKSpriteNode(imageNamed: "chopstick")
-            
-            //Add it to the Array
-            chopsticks.append(chopstick)
-            
-            //Set the X position of the chopstick
-            chopstick.position.x = currentSushi.position.x-100
-            chopstick.position.y = currentSushi.position.y
-            addChild(chopstick)
-        }
+      
     }
     
    func addSushi()   {
+    stickPosition = Int.random(in: 0...2)
+
     let currentSushi = SKSpriteNode(imageNamed: "roll")
     if(self.sushiTower.count == 0){
         currentSushi.position.x = sushiBase.position.x
@@ -72,6 +63,59 @@ class GameScene: SKScene {
            }
         addChild(currentSushi)
         sushiTower.append(currentSushi)
+    
+    
+          //Generate numbers from 0 to 2
+          //0??
+          //Dont spwan chopstick
+          //1??
+          //Spawn it on right
+          // stick.position.x = sushi.position.x + 100
+          // stick.position.y = sushi.position.y - 10
+          
+          //2?
+          //Spawn it on left
+          // stick.position.x = sushi.position.x - 100
+          // stick.position.y = sushi.position.y - 10
+          
+          if(stickPosition==0){
+              //Do nothing
+          }
+          else if(stickPosition == 1){
+               let stick = SKSpriteNode(imageNamed:"chopstick")
+               stick.position.x = currentSushi.position.x + 100
+               stick.position.y = currentSushi.position.y - 10
+            // add chopstick to the screen
+                addChild(stick)
+            // add the chopstick to the array
+                self.chopsticks.append(stick)
+            // redraw stick facing other direciton
+            let facingRight = SKAction.scaleX(to: -1, duration: 0)
+            stick.run(facingRight)
+          }
+          else if(stickPosition == 2){
+                let stick = SKSpriteNode(imageNamed:"chopstick")
+                stick.position.x = currentSushi.position.x - 100
+                stick.position.y = currentSushi.position.y - 10
+              // add chopstick to the screen
+                  addChild(stick)
+              // add the chopstick to the array
+                  self.chopsticks.append(stick)
+          }
+
+          sushiBase.zPosition = -1
+          for currentSushi in sushiTower{
+//              //Take new chopstick node
+//              let chopstick = SKSpriteNode(imageNamed: "chopstick")
+//
+//              //Add it to the Array
+//              chopsticks.append(chopstick)
+//
+//              //Set the X position of the chopstick
+//              chopstick.position.x = currentSushi.position.x-100
+//              chopstick.position.y = currentSushi.position.y
+//              addChild(chopstick)
+          }
     }
     
     //Cat hitting the base but the piece on top of base should be removed and the whole towert should come down
@@ -79,27 +123,31 @@ class GameScene: SKScene {
         //Get the sushi on top of base
         let sushiToRemove = self.sushiTower[0]
         let stickToRemove = self.chopsticks[0]
-        if(sushiToRemove != nil && chopsticks.count>0){
+//        let stickToRemove = self.chopsticks[0]
+//        if(sushiToRemove != nil && stickToRemove != nil){
+        if(sushiToRemove != nil ){
         //Bring the whole arrray down
-        for sushi in self.sushiTower{
+            for _ in self.sushiTower{
         }
         for index in 0...(self.sushiTower.count)-1{
             let sushi = self.sushiTower[index]
-            let currentChopStick =  chopsticks[index]
+            
             let dropAction  = SKAction.move(to: CGPoint(x: sushi.position.x, y: sushi.position.y-100), duration: 0.1)
             sushi.run(dropAction)
 
-            let dropActionChopStick  = SKAction.move(to: CGPoint(x: currentChopStick.position.x, y: currentChopStick.position.y-100), duration: 0.1)
-            currentChopStick.run(dropActionChopStick)
+//            let dropActionChopStick  = SKAction.move(to: CGPoint(x: stickToRemove.position.x, y: stickToRemove.position.y-100), duration: 0.1)
+//            stickToRemove.run(dropActionChopStick)
             
         }
         //Remove that sushi and chopstick from screen
         sushiToRemove.removeFromParent()
-        stickToRemove.removeFromParent()
+//        stickToRemove.removeFromParent()
 
         //Remove that sushi and chopstick from Array
         self.sushiTower.remove(at: 0)
-        self.chopsticks.remove(at: 0)
+  //      self.chopsticks.remove(at: 0)
+            
+          
         }
     }
     
